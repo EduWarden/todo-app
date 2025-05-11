@@ -1,7 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { TrashIcon } from '@heroicons/react/24/solid';
 import { Todo } from '@/types/TodoInterface';
+import styles from '@/styles/TodoItem.module.css';
+import deleteStyles from '@/styles/DeleteButton.module.css';
 
 interface Props {
   todo: Todo;
@@ -15,38 +18,37 @@ export const TodoItem = ({ todo, onToggle, onDelete }: Props) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-3 transition-all hover:shadow-md"
+      className={styles.todoItem}
     >
-      <div className="flex items-center space-x-3">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => onToggle(todo.id)}
-          className={`px-2 py-1 rounded text-sm font-medium
-            ${todo.completed 
-              ? 'bg-green-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200'
-            } transition-colors`}
+      <div className={styles.itemContent}>
+        <div className={styles.leftSection}>
+          <div className={styles.cntr}>
+            <input 
+              id={`cbx-${todo.id}`} 
+              type="checkbox" 
+              className={`${styles.checkbox} ${styles.hidden}`}
+              checked={todo.completed}
+              onChange={() => onToggle(todo.id)}
+            />
+            <label htmlFor={`cbx-${todo.id}`} className={styles.cbx} />
+          </div>
+          <label 
+            htmlFor={`cbx-${todo.id}`}
+            className={`${styles.taskText} ${todo.completed ? styles.completed : ''}`}
+          >
+            {todo.text}
+          </label>
+        </div>
+        <button 
+          onClick={() => onDelete(todo.id)}
+          className={deleteStyles.deleteButtonWrapper}
         >
-          {todo.completed ? '✓' : '-'}
-        </motion.button>
-        <span
-          className={`${
-            todo.completed 
-              ? 'line-through text-gray-400' 
-              : 'text-gray-700 dark:text-gray-200'
-          }`}
-        >
-          {todo.text}
-        </span>
+          <span className={deleteStyles.text}>Удалить</span>
+          <div className={deleteStyles.icon}>
+            <TrashIcon />
+          </div>
+        </button>
       </div>
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => onDelete(todo.id)}
-        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
-      >
-        Удалить
-      </motion.button>
     </motion.div>
   );
 };

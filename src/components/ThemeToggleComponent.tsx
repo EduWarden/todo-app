@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import styles from './theme-toggle.module.css';
 
 export const ThemeToggle = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -15,24 +15,36 @@ export const ThemeToggle = () => {
     const root = document.documentElement;
     const newDarkMode = !darkMode;
     
+    root.style.setProperty('--transition-in-progress', '1');
+    
     if (newDarkMode) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
     
+    setTimeout(() => {
+      root.style.removeProperty('--transition-in-progress');
+    }, 500);
+    
     localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
     setDarkMode(newDarkMode);
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={toggleTheme}
-      className="fixed top-4 right-4 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors"
-    >
-      Изменить тему
-    </motion.button>
+    <div className={`${styles.container} theme-toggle`}>
+      <input
+        type="checkbox"
+        id="checkbox"
+        className={styles.checkbox}
+        checked={darkMode}
+        onChange={toggleTheme}
+      />
+      <label
+        htmlFor="checkbox"
+        className={styles.label}
+        aria-label="Toggle theme"
+      />
+    </div>
   );
 };
